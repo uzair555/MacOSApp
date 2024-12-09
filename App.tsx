@@ -5,114 +5,148 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
+  FlatList,
+  Pressable,
   StyleSheet,
   Text,
-  useColorScheme,
+  TextInput,
   View,
+  type ListRenderItem,
 } from 'react-native';
+import { RadioButton } from 'react-native-paper';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
+type Reminder = {
   title: string;
-}>;
+  completed: boolean
+}
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const defaultReminders: Reminder[] = [
+  {
+    title: 'Subscribe to notJust.dev',
+    completed: false,
+  },
+  {
+    title: 'Build exciting apps',
+    completed: false,
+  },
+  {
+    title: 'Be happy',
+    completed: true,
+  },
+];
+
+
+
+function App(): JSX.Element {
+  const [reminders, setReminders] = useState<Reminder[]>(defaultReminders)
+  const [newReminder,setNewReminder]=useState('')
+
+  const sortedReminders=[...reminders]
+  sortedReminders.sort((a,b)=>a.completed - b.completed);
+
+
+
+  const toggleCompletion=(reminder:Reminder)=>{
+   
+    let updateReminders=[...reminders]
+    let index=reminders.findIndex(r=>r.title==reminder.title)
+    updateReminders[index].completed=!updateReminders[index].completed
+    setReminders(updateReminders)
+  }
+
+  const addReminder=()=>{
+    if(newReminder.trim()===''){
+      return;
+    }
+    const updateReminder=[
+      ...reminders,
+      {title:newReminder.trim(),completed:false}
+    ]
+    setReminders(updateReminder)
+    setNewReminder('')
+  }
+
+  
+
+  // const renderItem : ListRenderItem<Reminder> = ({item,index})=>{
+  //   return(
+  //   <View style={styles.item}>
+  //   <RadioButton value={item.title}
+  //     status={item.completed?'checked':'unchecked'} 
+  //     color='royalblue'
+  //   />
+  //   <Text style={styles.itemTitle}>{item.title}</Text>
+  //   </View>
+  // )}
+
+  const renderItem = ({ item, index }: { item: Reminder, index: number }) => {
+    return (
+      <Pressable style={styles.item} onPress={()=>toggleCompletion(item)}>
+        <RadioButton value={item.title}
+          status={item.completed ? 'checked' : 'unchecked'}
+          color='royalblue'
+        />
+        <Text style={styles.itemTitle}>{item.title}</Text>
+      </Pressable>
+    )
+  }
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Reminder</Text>
+        <Text style={styles.title}>{reminders.length}</Text>
+      </View>
+      <FlatList data={sortedReminders} renderItem={renderItem} />
+      <TextInput 
+          placeholder='Add New Reminder'
+          value={newReminder}
+          onChangeText={setNewReminder}
+          style={styles.input}
+          placeholderTextColor={"white"}
+          onSubmitEditing={addReminder}
+          />
     </View>
   );
 }
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    padding: 10,
+    backgroundColor: "#211D2D",
+    flex: 1
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  titleContainer:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    marginVertical:15
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  title:{
+    color:"royalblue",
+    fontSize:32,
+    fontWeight:"bold"
   },
-  highlight: {
-    fontWeight: '700',
+  item: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#454547',
+    paddingVertical: 5
   },
+  itemTitle: {
+    color: "white"
+  },
+  input:{
+    color:"white",
+    padding:10,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#454547',
+    borderRadius:5
+  }
 });
 
 export default App;
+

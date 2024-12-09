@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "mac":"react-native run-macos",
+    "mac": "react-native run-macos",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
@@ -13,7 +13,8 @@
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.71.19",
-    "react-native-macos": "^0.71.36"
+    "react-native-macos": "^0.71.36",
+    "react-native-paper": "^5.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
