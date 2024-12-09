@@ -25,7 +25,7 @@ type Reminder = {
 
 const defaultReminders: Reminder[] = [
   {
-    title: 'Subscribe to notJust.dev',
+    title: 'coding',
     completed: false,
   },
   {
@@ -69,18 +69,6 @@ function App(): JSX.Element {
     setNewReminder('')
   }
 
-  
-
-  // const renderItem : ListRenderItem<Reminder> = ({item,index})=>{
-  //   return(
-  //   <View style={styles.item}>
-  //   <RadioButton value={item.title}
-  //     status={item.completed?'checked':'unchecked'} 
-  //     color='royalblue'
-  //   />
-  //   <Text style={styles.itemTitle}>{item.title}</Text>
-  //   </View>
-  // )}
 
   const renderItem = ({ item, index }: { item: Reminder, index: number }) => {
     return (
